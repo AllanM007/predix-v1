@@ -1,6 +1,6 @@
-# Sentinel: Smart Contracts
+# Predix: Smart Contracts
 
-Sentinel is a community-owned and governed EVM Optimistic Oracle using decentralized and trustless system designed to provide accurate and reliable data feeds to Ethereum Virtual Machine (EVM) applications. This oracle leverages the principles of optimism, allowing developers to efficiently and securely access off-chain information without sacrificing the benefits of decentralization.
+Predix is a community-owned and governed EVM Optimistic Oracle using decentralized and trustless system designed to provide accurate and reliable data feeds to Ethereum Virtual Machine (EVM) applications. This oracle leverages the principles of optimism, allowing developers to efficiently and securely access off-chain information without sacrificing the benefits of decentralization.
 
 Using this model, the community collectively governs the oracle, making decisions about data sources, consensus mechanisms, and protocol upgrades. This ensures that no single entity has control over the oracle, promoting transparency and preventing manipulation. The governance process typically involves token holders who can vote on proposals and changes, ensuring a fair and inclusive decision-making process.
 
@@ -10,7 +10,7 @@ By being community-owned and governed, this EVM Optimistic Oracle eliminates the
 
 ### Prerequisites
 
-To build the Sentinel smart contracts, you will need the following:
+To build the Predix smart contracts, you will need the following:
 
 - [Solidity](https://docs.soliditylang.org/en/v0.8.19/installing-solidity.html)
 - [Hardhat](https://hardhat.org/)
