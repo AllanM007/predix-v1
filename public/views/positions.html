@@ -21,13 +21,14 @@
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous"
     ></script>
-    <title>Predix|Price Feeds</title>
+    <title>Predix | Positions</title>
   </head>
   <style>
     table {
       font-family: arial, sans-serif;
       border-collapse: collapse;
       width: 100%;
+      border-radius: 20px;
     }
 
     td,
@@ -40,6 +41,7 @@
     tr:nth-child(even) {
       background-color: #dddddd;
     }
+
     .stakeButton {
       border: 1px solid #333366;
       padding: 4px;
@@ -77,53 +79,69 @@
       </div>
     </nav>
     <div style="text-align: center">
-      <h3>Live Price Feeds</h3>
+      <h3>Active Positions</h3>
     </div>
 
     <div style="justify-content: center">
       <table>
         <tr>
-          <th>Address</th>
+          <th>Id</th>
           <th>Pair</th>
           <th>Exchange Rate</th>
+          <th>Proposers</th>
+          <th>Prop Stake</th>
+          <th>Opposers</th>
+          <th>Opp Stake</th>
           <th>Action</th>
         </tr>
         <tr>
-          <td>0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c</td>
+          <td>1</td>
           <td>BTC/USD</td>
-          <td>26,395.40/1</td>
+          <td>26,450.90/1</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
           <td>
             <button
               class="stakeButton"
-              onclick="location.href=`/create-position/0xE887312c0595a10aC88e32ebb8e9F660Ad9aB7F7`"
+              onclick="location.href=`/update-position/0xE887312c0595a10aC88e32ebb8e9F660Ad9aB7F7`"
             >
-              Create
+              Stake
             </button>
           </td>
         </tr>
         <tr>
-          <td>0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419</td>
+          <td>2</td>
           <td>ETH/USD</td>
-          <td>1,830.93/1</td>
+          <td>2,000/1</td>
+          <td><span id="prop"></span></td>
+          <td><span id="propStake"></span></td>
+          <td><span id="opp"></span></td>
+          <td><span id="oppStake"></span></td>
           <td>
             <button
               class="stakeButton"
-              onclick="location.href=`/create-position/0xE887312c0595a10aC88e32ebb8e9F660Ad9aB7F7`"
+              onclick="location.href=`/update-position/0x603BD78e189AD028Ee5Ef73f50c4dfC0Fb29b3a3`"
             >
-              Create
+              Stake
             </button>
           </td>
         </tr>
         <tr>
-          <td>0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c</td>
+          <td>3</td>
           <td>LINK/USD</td>
-          <td>5.962/1</td>
+          <td>5.985/1</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
           <td>
             <button
               class="stakeButton"
-              onclick="location.href=`/create-position/0xE887312c0595a10aC88e32ebb8e9F660Ad9aB7F7`"
+              onclick="location.href=`/update-position/0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD`"
             >
-              Create
+              Stake
             </button>
           </td>
         </tr>
@@ -131,6 +149,36 @@
     </div>
   </body>
   <script type="module" src="../js/fetchFeeds.js"></script>
+  <script>
+    if (
+      localStorage.getItem("opp") === null ||
+      localStorage.getItem("oppStake") === null ||
+      localStorage.getItem("prop") === null ||
+      localStorage.getItem("propStake") === null
+    ) {
+      localStorage.setItem("opp", 0);
+      localStorage.setItem("oppStake", 0);
+      localStorage.setItem("prop", 0);
+      localStorage.setItem("propStake", 0);
+    } else if (
+      localStorage.getItem("opp") == 0 ||
+      localStorage.getItem("oppStake") == 0 ||
+      localStorage.getItem("prop") == 0 ||
+      localStorage.getItem("propStake") == 0
+    ) {
+      localStorage.setItem("opp", 0);
+      localStorage.setItem("oppStake", 0);
+      localStorage.setItem("prop", 1);
+      localStorage.setItem("propStake", 0.0001);
+    }
+
+    document.getElementById("prop").innerHTML = localStorage.getItem("prop");
+    document.getElementById("propStake").innerHTML =
+      localStorage.getItem("propStake");
+    document.getElementById("opp").innerHTML = localStorage.getItem("opp");
+    document.getElementById("oppStake").innerHTML =
+      localStorage.getItem("oppStake");
+  </script>
   <script
     src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
     integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"

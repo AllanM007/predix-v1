@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home | Update Position</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+    </script>
+  <script src="../js/connectWallet.js"></script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Predix</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/price-feeds">Prices</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/reserve-feeds">Reserves</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/positions">Positions</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container mt-">
+    <div class="d-flex min-vh-100 justify-content-center align-items-center">
+      <section class="border rounded p-4 py-5 shadow">
+        <h5>Stake On Position</h3>
+          <div>
+            <div class="card text-light bg-dark p-4" style="width: 400px">
+              <p>Position Address: <span id="positionAddress"></span></p>
+              <p class="m-0 p-0">Your balance:</p>
+              <div class="d-flex">
+                <h3 class="fw-bold mt-1"><span id="showBalance"></span></h3>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5">
+            <div id="positionAlert"></div>
+            <label for="bet">Outcome</label>
+            <select class="form-select" id="bet" aria-label="Default select example">
+                <option selected>Choose</option>
+                <option value="1">True</option>
+                <option value="2">False</option>
+            </select>
+          </div>
+            <div class="form-group mt-3">
+              <label for="amount">Stake</label>
+              <input type="number" id="amount" class="form-control" />
+            </div>
+            <div class="form-group mt-3">
+              <button class="sendEthButton btn btn-success w-100" id="sendEthButton">
+                Submit
+              </button>
+            </div>
+          </div>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+  <script>
+    window.onload = async function () {
+      var usrWallet = await ethereum.request({ method: 'eth_requestAccounts' });
+
+      localStorage.setItem("userEthWallet", usrWallet[0])
+
+      console.log(localStorage.getItem("userEthWallet"));
+
+      if (localStorage.getItem("userEthWallet") == null) {
+        document.getElementById('walletConnect').style.visibility = 'visible';
+        document.getElementById("usrAddress").style.visibility = "hidden";
+      } else {
+        document.getElementById("walletConnect").style.visibility = "hidden"
+        document.getElementById("showAccount").innerHTML = localStorage.getItem("userEthWallet")
+        document.getElementById('usrAddress').style.visibility = 'visible';
+      }
+    }
+
+    var host = window.location.pathname;
+    document.getElementById("positionAddress").innerHTML = host.replace("/update-position/", "")
+  </script>
+  <script type="module">
+    import { ethers } from "../js/ethers.js";
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+    const signer = provider.getSigner();
+
+    async function getBalance() {
+
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      const account = accounts[0];
+
+      const balance = await provider.getBalance(account);
+
+      const remainder = balance.mod(1e14);
+      const fmtBalance = ethers.utils.formatEther(balance.sub(remainder));
+      console.log(fmtBalance);
+
+      // we use the code below to convert the balance from wei to eth
+      document.querySelector('#showBalance').innerHTML = fmtBalance;
+      document.querySelector('#showAccount').innerHTML = account;
+    }
+
+    async function sendCollateral() {
+
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      const account = accounts[0];
+
+      const sendVal =  ethers.utils.parseUnits(document.getElementById("amount").value, 18); //document.getElementById("amount").value;
+
+      const gas_limit = "0x100000";
+      const gasPrice = await provider.getGasPrice();
+
+      // Sending Matic to an address
+      const sendCollateraltx = {
+        from: account,
+        to: '0x391E3567e8Da8018f592e1855A4459629c0E1d8A',
+        value: sendVal,
+        nonce: provider.getTransactionCount(account, "latest"),
+        gasLimit: ethers.utils.hexlify(gas_limit), // 100000
+        gasPrice: ethers.utils.hexlify(gasPrice),
+      };
+
+      const collateralTransfer = await signer.sendTransaction(sendCollateraltx);
+
+      const collateralTransferTx = await collateralTransfer.wait();
+
+      console.log(collateralTransferTx);
+
+      if (collateralTransferTx.status == 1) {
+        console.log("initiate post data function");
+        console.log(account, sendVal);
+
+        var positionMessage = `<div
+            class="d-flex p-3 border border-success btn btn-outline-success justify-content-center align-items-center"
+            style="background-color: green; color: white; border-radius: 20px"
+          >
+            Position Updated Successfully
+          </div>`
+
+        document.getElementById("positionAlert").innerHTML = `${positionMessage}`
+
+        // $.ajax({
+        //   type: 'post',
+        //   url: '/valueCollateral',
+        //   data: {
+        //     address: account,
+        //     amount: sendVal
+        //   },
+        //   success: function (data) {
+        //     alert("Succesfully posted transaction");
+        //     console.log("succesful data post");
+        //   },
+        //   error: function (err) {
+        //     console.log(err.statusText);
+        //   }
+        // });
+      } else {
+        console.log("Transaction unsuccesful");
+      }
+    }
+    getBalance()
+    document.getElementById('sendEthButton').addEventListener('click', sendCollateral);
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+</body>
+
+</html>
