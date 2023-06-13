@@ -1,10 +1,10 @@
 # Predix: Smart Contracts
 
-Predix is a community-owned and governed EVM Optimistic Oracle using decentralized and trustless system designed to provide accurate and reliable data feeds to Ethereum Virtual Machine (EVM) applications. This oracle leverages the principles of optimism, allowing developers to efficiently and securely access off-chain information without sacrificing the benefits of decentralization.
+Predix is a prediction market that leverages Chainlink core products to ensure data integrity, smart contract execution and speed.
 
-Using this model, the community collectively governs the oracle, making decisions about data sources, consensus mechanisms, and protocol upgrades. This ensures that no single entity has control over the oracle, promoting transparency and preventing manipulation. The governance process typically involves token holders who can vote on proposals and changes, ensuring a fair and inclusive decision-making process.
+Predix utilizes chainlink data feeds as data sources that users can predict on their future performance. Predix uses Chainlink's Feed Registry to dynamically fetch price feeds using a single contract to allow for as many data feeds as possible to be available to users.
 
-By being community-owned and governed, this EVM Optimistic Oracle eliminates the need for a centralized authority or third-party intermediaries. It promotes the values of decentralization, transparency, and security, allowing developers to build innovative applications on the Ethereum network with reliable and up-to-date external data.
+Predix uses chainlink's automation contracts to execute rewards/markets finalization based on data feed changes or expiry periods. This allows the protocol to execute securely and in a deterministic manner which ensures secure prediction market outcomes.
 
 ## Getting Started
 
@@ -48,17 +48,14 @@ slither .
 
 ### Core Contracts
 
-| **Contract**                                           | **Description**                                                                                                                                                                                                                                                        |
-| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`stakingAdapter`](contracts/stakingAdapter.sol)       | The entry point for managing protocol participants(data providers & disputers) stakes. Their stakes ensure security and data validity through financial incentives and penalties. It handles the logic for of the staking, as well as liquidations and redemptions.    |
-| [`SNT-Token`](contracts/SNT.sol)                       | An ERC-20 token designed to be the governance token of the protocol for voting on proposals.                                                                                                                                                                           |
-| [`stSNT-Token`](contracts/stSNT.sol)                   | An ERC-20 token designed to be the staking token of the protocol which is issued to protocol participants when they stake to represent their share during redemptions.                                                                                                 |
-| [`aggregatorAdapter`](contracts/aggregatorAdapter.sol) | This contract manages the aggregation of various data sent by providers using an optimal data validity threshhold that is decided by the protocol. It also tracks the invalid data sent by providers based on a deviation threshhold to record invalid data providers. |
-| [`disputeAdapter`](contracts/disputeAdapter.sol)       | Disputes that arise from data providers and data feed consumers are settled by this contract and it issues rewards/penalties records to the [stakingAdapter](contracts/stakingAdapter.sol) contract .                                                                  |
-| [`oracleAdapter`](contracts/oracleAdapter.sol)         | Servers asset that have been aggregated by the [`aggregationAdapter`](contracts/aggregationAdapter.sol) contract.This is the entry point for all data feed consumers.                                                                                                  |
-| [`proposalAdapter`](contracts/proposalAdapter.sol)     | This contract handles all proposals to the protocol i.e deviation threshhold, new data provider, aggregation metrics.                                                                                                                                                  |
+| **Contract**                                             | **Description**                                                                                                                                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`oracleFeedRegistry`](contracts/oracleFeedRegistry.sol) | This contract dynamically fetches chainlink oracle price data feeds and provides them for users when creating positions.                                                         |
+| [`positionsFactory`](contracts/positionsFactory.sol)     | This contract manages position creation/proposals/opposals and liquidations.                                                                                                     |
+| [`automationFactory`](contracts/automationFactory.sol)   | This contract manages the positions automation using chainlink's automation module to facilitate price feeds monitoring and calling liquidations/closing positions.              |
+| [`upKeepRegistry`](contracts/upKeepRegistry.sol)         | This is a chainlink upkeep contract that manages the chainlink [`automationFactory`](contracts/automationFactory.sol) contract to make sure it is funded and executes correctly. |
 
-![Oracle Flow Chart](/ff8509a8-d6fc-4d6d-978f-57a937ca0089.png) |
+![Predix Flow Chart](/ff8509a8-d6fc-4d6d-978f-57a937ca0089.png) |
 
 <!-- | [`TellorPriceOracle`](contracts/Oracles/TellorPriceOracle.sol)           | Tellor oracle integration contract.                                                                                                                                                                                                                                                                                                                                                                                                     |
 
